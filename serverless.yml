@@ -3,15 +3,17 @@ service: serverless-image-processing
 provider:
   name: aws
   runtime: nodejs6.10
+  environment:
+    BUCKET: ${file(./config.yml):BUCKET}
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - "s3:PutObject"
-      Resource: "arn:aws:s3:::sls-demos-bucket-102"
+        - "s3:*"
+      Resource: "arn:aws:s3:::sls-demos-bucket-103"
 
 functions:
   uploadFile:
-    handler: handler.uploadFile
+    handler: lib/functions/uploadFile.handler
     events:
       - http:
           path: uploadFile
@@ -19,8 +21,8 @@ functions:
           cors: true
 
   processImage:
-    handler: handler.processImage
+    handler: lib/functions/processImage.handler
     events:
         - s3:
-            bucket: sls-demos-bucket-102
+            bucket: sls-demos-bucket-103
             event: s3:ObjectCreated:*
